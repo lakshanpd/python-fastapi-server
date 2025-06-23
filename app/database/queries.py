@@ -1,0 +1,1 @@
+add_user = "INSERT INTO user (id, first_name, last_name, birthday, email, phone_number, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)" 
