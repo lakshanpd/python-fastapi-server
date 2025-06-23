@@ -10,4 +10,5 @@ class User(BaseModel):
     phone_number: str | None = None
     updated_at: datetime
     created_at: datetime
+    password: str
     

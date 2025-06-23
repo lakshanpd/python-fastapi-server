@@ -1,19 +1,34 @@
 from app.models.index import User
 from datetime import date, datetime
 from .connection import connect_to_mysql
-from .queries import add_user
+from .queries import add_user_query, get_email_query
 
-def user_registration(user: User):
+def add_user_to_db(user: User):
     connection = connect_to_mysql()
     if connection:
         try:
             cursor = connection.cursor()
-            user_data = (user.id, user.first_name, user.last_name, user.birthday, user.email, user.phone_number, user.updated_at, user.created_at)
-            cursor.execute(add_user, user_data)
+            user_data = (user.id, user.first_name, user.last_name, user.birthday, user.email, user.phone_number, user.updated_at, user.created_at, user.password)
+            cursor.execute(add_user_query, user_data)
             connection.commit()
-            print("Record added successfully.")
         except Exception as error:
-            print("Error while user registration: ", error)
-        finally:
-            return
-    
+            raise Exception("Error while adding user to db")
+    else:
+        raise Exception("Can not connect to the db")
+          
+# if a record with the given email exists returns true, otherwise false  
+def check_email_exist(email: str):
+    connection = connect_to_mysql()
+    if connection:
+        try:
+            cursor = connection.cursor()
+            cursor.execute(get_email_query, (email,))
+            result = cursor.fetchall()
+            if len(result) > 0:
+                return True 
+            return False
+        except Exception as error:
+            raise Exception("Error while adding user to db")
+    else:
+        raise Exception("Can not connect to the db")
+        
