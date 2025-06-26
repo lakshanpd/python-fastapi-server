@@ -8,7 +8,7 @@ def add_user_to_db(user: User):
     if connection:
         try:
             cursor = connection.cursor()
-            user_data = (user.id, user.first_name, user.last_name, user.birthday, user.email, user.phone_number, user.updated_at, user.created_at, user.password)
+            user_data = (str(user.id), user.first_name, user.last_name, user.birthday, user.email, user.phone_number, user.updated_at, user.created_at, user.password)
             cursor.execute(add_user_query, user_data)
             connection.commit()
         except Exception as error:

@@ -1,8 +1,9 @@
 from pydantic import BaseModel
 from datetime import datetime, date
+from uuid import UUID
 
 class User(BaseModel):
-    id: int
+    id: UUID | None = None
     first_name: str
     last_name: str | None = None
     birthday: date
