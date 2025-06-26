@@ -1,6 +1,6 @@
 from models import User
 from .connection import connect_to_mysql
-from .queries import add_user_query, get_email_query
+from .queries import add_user_query, get_email_query, get_password_query
 from errors import DatabaseError
 
 def add_user_to_db(user: User):
@@ -27,4 +27,17 @@ def check_email_exist(email: str):
             return False
         except Exception as error:
             raise DatabaseError("Error while adding user to db")
+      
+# get hashed password from database for given email  
+def get_hashed_password(email):
+    connection = connect_to_mysql()
+    if connection:
+        try:
+            cursor = connection.cursor()
+            cursor.execute(get_password_query, (email,))
+            result = cursor.fetchone()
+            return result[0]
+        except Exception as error:
+            raise DatabaseError("Error while fetching user password to match")
+        
         
