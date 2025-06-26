@@ -1,6 +1,6 @@
 import bcrypt
 from database.db import add_user_to_db, check_email_exist
-from models.index import User
+from models import User
 from errors import UserRegistrationError
 
 def register_user(user: User):

@@ -1,5 +1,4 @@
-from models.index import User
-from datetime import date, datetime
+from models import User
 from .connection import connect_to_mysql
 from .queries import add_user_query, get_email_query
 from errors import DatabaseError
