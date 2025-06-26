@@ -2,6 +2,7 @@ from app.models.index import User
 from datetime import date, datetime
 from .connection import connect_to_mysql
 from .queries import add_user_query, get_email_query
+from app.errors import DatabaseError
 
 def add_user_to_db(user: User):
     connection = connect_to_mysql()
@@ -12,9 +13,7 @@ def add_user_to_db(user: User):
             cursor.execute(add_user_query, user_data)
             connection.commit()
         except Exception as error:
-            raise Exception("Error while adding user to db")
-    else:
-        raise Exception("Can not connect to the db")
+            raise DatabaseError("Error while adding user to db")
           
 # if a record with the given email exists returns true, otherwise false  
 def check_email_exist(email: str):
@@ -28,7 +27,5 @@ def check_email_exist(email: str):
                 return True 
             return False
         except Exception as error:
-            raise Exception("Error while adding user to db")
-    else:
-        raise Exception("Can not connect to the db")
+            raise DatabaseError("Error while adding user to db")
         

@@ -1,6 +1,7 @@
 import mysql.connector
 import os
 from dotenv import load_dotenv
+from app.errors import DatabaseError
 
 load_dotenv()
 
@@ -16,5 +17,5 @@ def connect_to_mysql():
         return mysql.connector.connect(**config)
     except (mysql.connector.Error, IOError) as err:
         print("Failed to connect, exiting without a connection: %s", err)
-        return None        
+        raise DatabaseError("Error while connecting to the database.")
     
