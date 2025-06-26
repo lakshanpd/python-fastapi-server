@@ -1,7 +1,7 @@
 import bcrypt
-from app.database.db import add_user_to_db, check_email_exist
-from app.models.index import User
-from app.errors import UserRegistrationError
+from database.db import add_user_to_db, check_email_exist
+from models.index import User
+from errors import UserRegistrationError
 
 def register_user(user: User):
     if check_email_exist(user.email):

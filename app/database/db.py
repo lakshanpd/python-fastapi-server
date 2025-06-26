@@ -1,8 +1,8 @@
-from app.models.index import User
+from models.index import User
 from datetime import date, datetime
 from .connection import connect_to_mysql
 from .queries import add_user_query, get_email_query
-from app.errors import DatabaseError
+from errors import DatabaseError
 
 def add_user_to_db(user: User):
     connection = connect_to_mysql()
