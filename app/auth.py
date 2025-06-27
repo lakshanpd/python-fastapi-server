@@ -1,15 +1,31 @@
-from models import LoginDetails, RefreshTokenRequest
-from database.db import get_hashed_password, get_user_claims
-import bcrypt
-import jwt
-import os
-from dotenv import load_dotenv
-from errors import UserLoginError
 from datetime import datetime, timezone
+import uuid
+import bcrypt
+from dotenv import load_dotenv
+import os
+import jwt
+from database.db import add_user_to_db, check_email_exist, get_hashed_password, get_user_claims
+from errors import UserLoginError, UserRegistrationError
+from models import LoginDetails, RefreshTokenRequest, User
 
 load_dotenv()
 secret_key = os.getenv("secret_key")
 
+# save user in the database
+def register_user(user: User):
+    if check_email_exist(user.email):
+        raise UserRegistrationError("user has already registered")
+    id = uuid.uuid4()
+    user.id = id
+    password = user.password
+    bytes = password.encode('utf-8')
+    salt = bcrypt.gensalt()
+    hashed_password = bcrypt.hashpw(bytes, salt)
+    # hashing password
+    user.password = hashed_password
+    add_user_to_db(user)
+    
+# check user credentials and issue tokens. (access and refresh)
 def login_user(loginDetails: LoginDetails):
     hashed_password = get_hashed_password(loginDetails.email)
     if bcrypt.checkpw(loginDetails.password.encode('utf-8'), hashed_password.encode('utf-8')):
@@ -31,6 +47,7 @@ def login_user(loginDetails: LoginDetails):
     else:
         raise UserLoginError("user credentials are invalid.")
     
+# check refresh token and issue new access token
 def token_refresh(request: RefreshTokenRequest):
     decoded_jwt = jwt.decode(request.refresh_token, secret_key, algorithms=["HS256"], audience="python-fastapi-server", issuer="python-fastapi-server")
     if (decoded_jwt["exp"] > int(datetime.now(timezone.utc).timestamp())):
@@ -45,5 +62,3 @@ def token_refresh(request: RefreshTokenRequest):
         }
     else:
         raise UserLoginError("refresh token has been expired.")
-
-

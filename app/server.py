@@ -1,7 +1,6 @@
 from fastapi import FastAPI, HTTPException, status
 from models import User, LoginDetails, RefreshTokenRequest
-from auth.register import register_user
-from auth.login   import login_user, token_refresh
+from auth import login_user, token_refresh, register_user
 from errors import DatabaseError, UserRegistrationError, UserLoginError
 import logging
 import traceback
