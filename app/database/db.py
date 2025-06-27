@@ -52,6 +52,7 @@ def get_user_claims(email):
             access_token_claims = {
                 "iss": "python-fastapi-server",
                 "aud": "python-fastapi-server",
+                "type": "access_token",
                 "id": result[0],
                 "first name": result[1],
                 "last name": result[2],
@@ -62,6 +63,7 @@ def get_user_claims(email):
             refresh_token_claims = {
                 "iss": "python-fastapi-server",
                 "aud": "python-fastapi-server",
+                "type": "refresh_token",
                 "email": result[3],
                 "iat": int(datetime.now(timezone.utc).timestamp()),
                 "exp": int(datetime.now(timezone.utc).timestamp()) + 604800 # expiration time is one week
