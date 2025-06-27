@@ -9,3 +9,7 @@ class UserRegistrationError(Exception):
 # Custom exception for invalid data type errors
 class InvalidTypeError(Exception):
     pass
+
+# Custom exception for errors during user login process
+class UserLoginError(Exception):
+    pass

@@ -2,6 +2,7 @@ from models import User
 from .connection import connect_to_mysql
 from .queries import add_user_query, get_email_query, get_password_query, get_user_claims_query
 from errors import DatabaseError
+from datetime import datetime, timezone
 
 def add_user_to_db(user: User):
     connection = connect_to_mysql()
@@ -48,7 +49,24 @@ def get_user_claims(email):
             cursor = connection.cursor()
             cursor.execute(get_user_claims_query, (email,))
             result = cursor.fetchone()
-            return result[0]
+            access_token_claims = {
+                "iss": "python-fastapi-server",
+                "aud": "python-fastapi-server",
+                "id": result[0],
+                "first name": result[1],
+                "last name": result[2],
+                "email": result[3],
+                "iat": int(datetime.now(timezone.utc).timestamp()),
+                "exp": int(datetime.now(timezone.utc).timestamp()) + 3600 # expiration time is one hour
+            }
+            refresh_token_claims = {
+                "iss": "python-fastapi-server",
+                "aud": "python-fastapi-server",
+                "email": result[3],
+                "iat": int(datetime.now(timezone.utc).timestamp()),
+                "exp": int(datetime.now(timezone.utc).timestamp()) + 604800 # expiration time is one week
+            }
+            return [access_token_claims, refresh_token_claims]
         except Exception as error:
             raise DatabaseError("Error while fetching user claims")
         

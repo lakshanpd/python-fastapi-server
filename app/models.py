@@ -12,4 +12,8 @@ class User(BaseModel):
     updated_at: datetime
     created_at: datetime
     password: str
+
+class LoginDetails(BaseModel):
+    email: str
+    password: str
     
