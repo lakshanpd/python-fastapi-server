@@ -1,1 +1,5 @@
 fastapi[standard]
+bcrypt
+dotenv
+mysql-connector-python
+PyJWT
