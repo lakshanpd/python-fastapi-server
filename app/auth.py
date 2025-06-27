@@ -7,6 +7,7 @@ import jwt
 from database.db import add_user_to_db, check_email_exist, get_hashed_password, get_user_claims
 from errors import UserLoginError, UserRegistrationError
 from models import LoginDetails, RefreshTokenRequest, User
+from fastapi import Request, HTTPException, status
 
 load_dotenv()
 secret_key = os.getenv("secret_key")
@@ -62,3 +63,23 @@ def token_refresh(request: RefreshTokenRequest):
         }
     else:
         raise UserLoginError("refresh token has been expired.")
+
+# middleware for protected routes
+def validate_token(request: Request):
+    auth_header = request.headers.get("Authorization")
+    
+    if not auth_header or not auth_header.startswith("Bearer"):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authorization header is missing or invalid.")
+        
+    access_token = auth_header.split(" ")[1]
+    decoded_jwt = jwt.decode(access_token, secret_key, algorithms=["HS256"], audience="python-fastapi-server", issuer="python-fastapi-server")
+        
+    if "type" not in decoded_jwt or decoded_jwt["type"] != "access_token":
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token type is invalid.")
+        
+    if (decoded_jwt["exp"] > int(datetime.now(timezone.utc).timestamp())):
+        return get_user_claims(decoded_jwt["email"])[0]
+            
+    else:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Access token has been expired.")
+    
