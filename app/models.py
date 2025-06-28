@@ -20,3 +20,6 @@ class LoginDetails(BaseModel):
 class RefreshTokenRequest(BaseModel):
     refresh_token: str
     
+class TranslatorParams(BaseModel):
+    language: str
+    text: str
