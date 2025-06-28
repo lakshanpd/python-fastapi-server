@@ -1,6 +1,6 @@
 from langchain_core.prompts import ChatPromptTemplate
 from .model import model
-from app.models import TranslatorParams
+from models import TranslatorParams
 
 def language_translator(params: TranslatorParams):
     system_template = "translate the following from English to {language}. just give the translation most possible one. don't give any extra details."
