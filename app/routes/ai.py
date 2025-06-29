@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from models import TranslatorParams, ChatModelParams
 from llm.language_translator import language_translator
-from llm.chat_model import chat_model
+from llm.chat_model import chat_model, clear_chat_history
 import logging
 import traceback
 from auth import validate_token
@@ -29,3 +29,16 @@ async def ask_assistant(request = Depends(validate_token)):
     except Exception as e:
         logging.error("handled error: \n%s", traceback.format_exc())
         return HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
+@router.delete("/clear-chat")
+async def clear_chat(request = Depends(validate_token)):
+    try:
+        clear_chat_history(request["user"]["id"])
+        return {
+            "status": status.HTTP_200_OK,
+            "message": "chat history is cleared successfully."
+        }
+    except Exception as e:
+        logging.error("handled error: \n%s", traceback.format_exc())
+        return HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+    
