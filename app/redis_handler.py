@@ -26,7 +26,7 @@ class redis_handler:
             self.client.rpush(user_id, serialized)
 
     def get_messages(self, user_id, N):
-        messages_raw = self.client.lrange(user_id, self.client.llen(user_id)-N, -1)
+        messages_raw = self.client.lrange(user_id, -6, -1)
         messages = []
         for m in messages_raw:
             parsed = json.loads(m)
