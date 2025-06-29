@@ -23,3 +23,7 @@ class RefreshTokenRequest(BaseModel):
 class TranslatorParams(BaseModel):
     language: str
     text: str
+    
+class ChatModelParams(BaseModel):
+    user_id: str
+    user_input: str
