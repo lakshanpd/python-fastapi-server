@@ -3,3 +3,4 @@ bcrypt
 dotenv
 mysql-connector-python
 PyJWT
+redis
