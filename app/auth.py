@@ -81,3 +81,8 @@ def validate_token(request: Request):
     if "type" not in decoded_jwt or decoded_jwt["type"] != "access_token":
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token type is invalid.")
     
+    return {
+        "user": get_user_claims(decoded_jwt["email"])[0],
+        "request": request
+    }
+    
