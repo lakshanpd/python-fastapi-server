@@ -78,7 +78,10 @@ def validate_token(request: Request):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token type is invalid.")
         
     if (decoded_jwt["exp"] > int(datetime.now(timezone.utc).timestamp())):
-        return get_user_claims(decoded_jwt["email"])[0]
+        return {
+            "user": get_user_claims(decoded_jwt["email"])[0],
+            "request": request
+        }
             
     else:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Access token has been expired.")
