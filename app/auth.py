@@ -71,18 +71,13 @@ def validate_token(request: Request):
     if not auth_header or not auth_header.startswith("Bearer"):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authorization header is missing or invalid.")
         
-    access_token = auth_header.split(" ")[1]
-    decoded_jwt = jwt.decode(access_token, secret_key, algorithms=["HS256"], audience="python-fastapi-server", issuer="python-fastapi-server")
-        
+    try:
+        access_token = auth_header.split(" ")[1]
+        decoded_jwt = jwt.decode(access_token, secret_key, algorithms=["HS256"], audience="python-fastapi-server", issuer="python-fastapi-server")
+    
+    except jwt.exceptions.ExpiredSignatureError:
+        raise  HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token has been expired.")
+    
     if "type" not in decoded_jwt or decoded_jwt["type"] != "access_token":
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token type is invalid.")
-        
-    if (decoded_jwt["exp"] > int(datetime.now(timezone.utc).timestamp())):
-        return {
-            "user": get_user_claims(decoded_jwt["email"])[0],
-            "request": request
-        }
-            
-    else:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Access token has been expired.")
     
