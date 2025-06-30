@@ -33,40 +33,19 @@ class ChromaHandler:
 
         return chunks
     
-    async def sync_to_store(self, dir_path):
-        chunks_dict = await self.make_chunks(dir_path)
-        existing_collections = [col.name for col in self.persistent_client.list_collections()]
-
-        for collection_name in list(chunks_dict.keys()):
-            if (collection_name in existing_collections):
-                self.persistent_client.delete_collection(collection_name)  
-                          
-            vector_store = Chroma(
-                collection_name=collection_name,
-                embedding_function=self.embedding,
-                client=self.persistent_client,  
-            )
-            
-            uuids = [str(uuid4()) for _ in range(len(chunks_dict[collection_name]))]
-            vector_store.add_documents(documents=chunks_dict[collection_name], ids=uuids) 
-            
-    def query(self, collection_name):
+    async def sync_document_data(self, dir_path):
+        chunks = await self.make_chunks(dir_path)
         
+        existing_collections = [col.name for col in self.persistent_client.list_collections()]
+        if "document" in existing_collections:
+            self.persistent_client.delete_collection("document")
+
         vector_store = Chroma(
-            collection_name=collection_name,
+            collection_name="document",
             embedding_function=self.embedding,
             client=self.persistent_client,  
         )
-        
-        results = vector_store.similarity_search(
-            "what is the last day for registration?",
-            k=2
-        )
-        for res in results:
-            print(f"* {res.page_content} [{res.metadata}]")
-                 
-                 
-if __name__ == "__main__":
-    test_obj = ChromaHandler()
-    result = asyncio.run(test_obj.make_chunks("./data/"))
-    print(result)
+                           
+        uuids = [str(uuid4()) for _ in range(len(chunks))]
+        vector_store.add_documents(documents=chunks, ids=uuids) 
+            
