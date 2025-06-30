@@ -47,5 +47,14 @@ class ChromaHandler:
         )
                            
         uuids = [str(uuid4()) for _ in range(len(chunks))]
-        vector_store.add_documents(documents=chunks, ids=uuids) 
+        vector_store.add_documents(documents=chunks, ids=uuids)
+        
+    def query_similar_docs(self, query):
+        vector_store = Chroma(
+            collection_name="document",
+            embedding_function=self.embedding,
+            client=self.persistent_client,  
+        )
+        return vector_store.similarity_search_with_score(query=query, k=2)
             
+chroma_handler = ChromaHandler()
