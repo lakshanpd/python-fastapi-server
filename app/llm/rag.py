@@ -4,9 +4,9 @@ from chroma_handler import chroma_handler
 from .model import model
 from langchain_core.messages import HumanMessage
 
-def rag_model(user_id, user_query):
+def rag_model(user_id, user_input):
     system_message = "You are a helpful AI bot knowing upcoming cricket tournament. Also, you can answer general questions about cricket. If user asks about the upcoming cricket tournament, always use retrieved data. If you don't have enough data, tell that you don't know about it. Give the answers directly and politely."
-    user_message = HumanMessage(content=user_query)
+    user_message = HumanMessage(content=user_input)
     
     template = ChatPromptTemplate.from_messages(
         [
@@ -22,8 +22,8 @@ def rag_model(user_id, user_query):
     
     prompt = template.invoke({
         "history": history,
-        "retrieved_info": chroma_handler.query_similar_docs(user_query),
-        "question": user_query
+        "retrieved_info": chroma_handler.query_similar_docs(user_input),
+        "question": user_input
      })
             
     response = model.invoke(prompt)
