@@ -55,6 +55,13 @@ class ChromaHandler:
             embedding_function=self.embedding,
             client=self.persistent_client,  
         )
-        return vector_store.similarity_search_with_score(query=query, k=2)
+        
+        result = vector_store.similarity_search_with_score(query=query, k=1)
+        threshold = 0.85
+        
+        if (result[0][1] < threshold):
+            return result[0][0].page_content
+        
+        return "None"
             
 chroma_handler = ChromaHandler()
