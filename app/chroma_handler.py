@@ -26,18 +26,12 @@ class ChromaHandler:
         loader = DirectoryLoader(dir_path, glob="*.txt")
         docs = loader.load()
 
-        chunks_dict = {}
         for doc in docs:
-            file_name = self.get_collection_name(doc.metadata["source"])
-            chunks_dict[file_name] = []
+            doc.metadata["source"] = self.get_collection_name(doc.metadata["source"])
 
         chunks = await self.chunker.atransform_documents(docs)
 
-        for chunk in chunks:
-            file_name = self.get_collection_name(chunk.metadata["source"])
-            chunks_dict[file_name].append(chunk)
-
-        return chunks_dict
+        return chunks
     
     async def sync_to_store(self, dir_path):
         chunks_dict = await self.make_chunks(dir_path)
@@ -55,4 +49,24 @@ class ChromaHandler:
             
             uuids = [str(uuid4()) for _ in range(len(chunks_dict[collection_name]))]
             vector_store.add_documents(documents=chunks_dict[collection_name], ids=uuids) 
+            
+    def query(self, collection_name):
+        
+        vector_store = Chroma(
+            collection_name=collection_name,
+            embedding_function=self.embedding,
+            client=self.persistent_client,  
+        )
+        
+        results = vector_store.similarity_search(
+            "what is the last day for registration?",
+            k=2
+        )
+        for res in results:
+            print(f"* {res.page_content} [{res.metadata}]")
                  
+                 
+if __name__ == "__main__":
+    test_obj = ChromaHandler()
+    result = asyncio.run(test_obj.make_chunks("./data/"))
+    print(result)
