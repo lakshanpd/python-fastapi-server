@@ -6,3 +6,4 @@ PyJWT
 redis
 langchain_experimental
 unstructured
+chromadb
