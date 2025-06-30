@@ -4,3 +4,5 @@ dotenv
 mysql-connector-python
 PyJWT
 redis
+langchain_experimental
+unstructured
