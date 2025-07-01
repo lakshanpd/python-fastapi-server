@@ -6,7 +6,7 @@ import os
 import jwt
 from database.sql_handler import sql_handler
 from utils.errors import UserLoginError, UserRegistrationError
-from models import LoginDetails, RefreshTokenRequest, User
+from utils.models import LoginDetails, RefreshTokenRequest, User
 from fastapi import Request, HTTPException, status
 
 load_dotenv()

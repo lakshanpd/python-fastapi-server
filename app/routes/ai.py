@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, status, Depends
-from models import TranslatorParams, ChatModelParams
+from utils.models import TranslatorParams, ChatModelParams
 from llm.language_translator import language_translator
 from llm.chat_model import chat_model, clear_chat_history
 from llm.rag import rag_model
