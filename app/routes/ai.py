@@ -5,7 +5,7 @@ from llm.chat_model import chat_model, clear_chat_history
 from llm.rag import rag_model
 import logging
 import traceback
-from auth import validate_token
+from utils.auth import validate_token
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
