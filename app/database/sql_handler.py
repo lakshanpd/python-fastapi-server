@@ -2,11 +2,15 @@ from dotenv import load_dotenv
 import os
 import mysql.connector
 from models import User
-from .queries import add_user_query, get_email_query, get_password_query, get_user_claims_query
 from errors import DatabaseError
 from datetime import datetime, timezone
 
 load_dotenv()
+
+add_user_query = "INSERT INTO user (id, first_name, last_name, birthday, email, phone_number, created_at, updated_at, password) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)" 
+get_email_query = "SELECT email FROM user WHERE email = %s"
+get_password_query = "SELECT password FROM user WHERE email = %s"
+get_user_claims_query = "SELECT id, first_name, last_name, email, created_at, updated_at FROM user WHERE email = %s"
 
 config = {
   'user': os.getenv("user"),
