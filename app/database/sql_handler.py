@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 import os
 import mysql.connector
 from models import User
-from errors import DatabaseError
+from utils.errors import DatabaseError
 from datetime import datetime, timezone
 
 load_dotenv()

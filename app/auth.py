@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 import os
 import jwt
 from database.sql_handler import sql_handler
-from errors import UserLoginError, UserRegistrationError
+from utils.errors import UserLoginError, UserRegistrationError
 from models import LoginDetails, RefreshTokenRequest, User
 from fastapi import Request, HTTPException, status
 
