@@ -1,5 +1,5 @@
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from redis_handler import redis_handler
+from database.redis_handler import redis_handler
 from chroma_handler import chroma_handler
 from .model import model
 from langchain_core.messages import HumanMessage

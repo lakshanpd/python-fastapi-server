@@ -1,5 +1,5 @@
 from .model import model
-from redis_handler import redis_handler
+from database.redis_handler import redis_handler
 from langchain_core.messages import HumanMessage, SystemMessage
 
 def chat_model(user_id, user_input):
