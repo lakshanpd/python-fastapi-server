@@ -4,7 +4,7 @@ import bcrypt
 from dotenv import load_dotenv
 import os
 import jwt
-from database.db import add_user_to_db, check_email_exist, get_hashed_password, get_user_claims
+from database.sql_handler import sql_handler
 from errors import UserLoginError, UserRegistrationError
 from models import LoginDetails, RefreshTokenRequest, User
 from fastapi import Request, HTTPException, status
@@ -14,7 +14,7 @@ secret_key = os.getenv("secret_key")
 
 # save user in the database
 def register_user(user: User):
-    if check_email_exist(user.email):
+    if sql_handler.check_email_exist(user.email):
         raise UserRegistrationError("user has already registered")
     id = uuid.uuid4()
     user.id = id
@@ -24,13 +24,13 @@ def register_user(user: User):
     hashed_password = bcrypt.hashpw(bytes, salt)
     # hashing password
     user.password = hashed_password
-    add_user_to_db(user)
+    sql_handler.add_user_to_db(user)
     
 # check user credentials and issue tokens. (access and refresh)
 def login_user(loginDetails: LoginDetails):
-    hashed_password = get_hashed_password(loginDetails.email)
+    hashed_password = sql_handler.get_hashed_password(loginDetails.email)
     if bcrypt.checkpw(loginDetails.password.encode('utf-8'), hashed_password.encode('utf-8')):
-        user_claims = get_user_claims(loginDetails.email)
+        user_claims = sql_handler.get_user_claims(loginDetails.email)
         access_token = jwt.encode(
             payload=user_claims[0],
             key=secret_key,
@@ -52,7 +52,7 @@ def login_user(loginDetails: LoginDetails):
 def token_refresh(request: RefreshTokenRequest):
     decoded_jwt = jwt.decode(request.refresh_token, secret_key, algorithms=["HS256"], audience="python-fastapi-server", issuer="python-fastapi-server")
     if (decoded_jwt["exp"] > int(datetime.now(timezone.utc).timestamp())):
-        user_claims = get_user_claims(decoded_jwt["email"])
+        user_claims = sql_handler.get_user_claims(decoded_jwt["email"])
         access_token = jwt.encode(
             payload=user_claims[0],
             key=secret_key,
@@ -82,7 +82,7 @@ def validate_token(request: Request):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token type is invalid.")
     
     return {
-        "user": get_user_claims(decoded_jwt["email"])[0],
+        "user": sql_handler.get_user_claims(decoded_jwt["email"])[0],
         "request": request
     }
     
