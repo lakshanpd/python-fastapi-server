@@ -6,7 +6,7 @@ from langchain.schema import HumanMessage, AIMessage, BaseMessage
 
 load_dotenv()
 
-class redis_handler:
+class RedisHandler:
     def __init__(self):
         self.client = redis.Redis(
             host=os.getenv("redis_host"),
@@ -38,3 +38,5 @@ class redis_handler:
 
     def delete_all(self, user_id):
         self.client.delete(user_id)
+
+redis_handler = RedisHandler()

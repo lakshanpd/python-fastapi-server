@@ -17,8 +17,7 @@ def rag_model(user_id, user_input):
         ]
     )
     
-    history_handler = redis_handler()
-    history = history_handler.get_messages(user_id, 5)
+    history = redis_handler.get_messages(user_id, 5)
     
     prompt = template.invoke({
         "history": history,
@@ -27,6 +26,6 @@ def rag_model(user_id, user_input):
      })
             
     response = model.invoke(prompt)
-    history_handler.set_messages(user_id, [user_message, response])
+    redis_handler.set_messages(user_id, [user_message, response])
     
     return response.content
